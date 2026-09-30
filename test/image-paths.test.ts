@@ -22,6 +22,20 @@ describe("image path detection", () => {
 		]);
 	});
 
+	it("detects a dragged macOS screenshot whose name has a narrow no-break space before AM/PM", () => {
+		// macOS writes U+202F before AM/PM in screenshot names. Terminals such as Ghostty
+		// backslash-escape only ASCII spaces on drop, so U+202F arrives unescaped, and JS
+		// regex \s matches it.
+		expect(
+			extractImagePaths("/Users/jv/Desktop/Screenshot\\ 2026-09-30\\ at\\ 11.45.00\u202fAM.png"),
+		).toEqual([
+			{
+				raw: "/Users/jv/Desktop/Screenshot\\ 2026-09-30\\ at\\ 11.45.00\u202fAM.png",
+				path: "/Users/jv/Desktop/Screenshot 2026-09-30 at 11.45.00\u202fAM.png",
+			},
+		]);
+	});
+
 	it("detects a double-quoted path that contains spaces", () => {
 		expect(extractImagePaths('"/Users/jv/Desktop/My Photo.png"')).toEqual([
 			{

@@ -10,7 +10,9 @@ export interface DetectedImagePath {
 
 const IMAGE_EXT = "(?:png|jpe?g|gif|webp)";
 const PATH_END = `(?=[\\s,.;:!?)\\]]|$)`;
-const BARE_PATH = `(?:~/|\\.\\.?/|/)(?:\\\\.|[^\\s:*?"<>|])*\\.${IMAGE_EXT}${PATH_END}`;
+// \u202f: macOS puts a narrow no-break space before AM/PM in screenshot names. Terminals
+// escape only ASCII spaces on drop, so it arrives bare, and \s would otherwise reject it.
+const BARE_PATH = `(?:~/|\\.\\.?/|/)(?:\\\\.|\\u202f|[^\\s:*?"<>|])*\\.${IMAGE_EXT}${PATH_END}`;
 const WINDOWS_DRIVE_PATH = `[A-Za-z]:[\\\\/][^\\s*?"<>|]*\\.${IMAGE_EXT}${PATH_END}`;
 const WINDOWS_UNC_PATH = `\\\\\\\\[^\\\\/\\s:*?"<>|]+[\\\\/][^\\s*?"<>|]*\\.${IMAGE_EXT}${PATH_END}`;
 const DOUBLE_QUOTED_PATH = `"(?:\\\\.|[^"\\\\])*\\.${IMAGE_EXT}"`;
